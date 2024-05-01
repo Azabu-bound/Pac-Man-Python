@@ -26,10 +26,10 @@ class Pacman(object):
 
     def get_valid_key(self):
         key_pressed = pygame.key.get_pressed()
-        if key_pressed[K_UP]: return UP
-        if key_pressed[K_DOWN]: return DOWN
-        if key_pressed[K_LEFT]: return LEFT
-        if key_pressed[K_RIGHT]: return RIGHT
+        if key_pressed[K_UP] or key_pressed[K_w]: return UP
+        if key_pressed[K_DOWN] or key_pressed[K_s]: return DOWN
+        if key_pressed[K_LEFT] or key_pressed[K_a]: return LEFT
+        if key_pressed[K_RIGHT] or key_pressed[K_d]: return RIGHT
         return STOP
 
     def render(self, screen):
