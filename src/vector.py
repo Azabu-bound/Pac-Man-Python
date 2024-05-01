@@ -1,5 +1,5 @@
 import math
-from typing import _VT_co
+#from typing import _VT_co
 
 class Vector2(object):
     def __init__(self, x=0, y=0) -> None:
@@ -20,6 +20,9 @@ class Vector2(object):
         if scalar != 0:
             return Vector2(self.x / scalar, self.y / scalar)
         return None
+
+    def __mul__(self, scalar):
+        return Vector2(self.x * scalar, self.y * scalar)
 
     # Equality check between vectors
     def __eq__(self, other):
@@ -43,7 +46,7 @@ class Vector2(object):
         return self.x, self.y
 
     def as_int(self):
-        return int(self.x), int(self.y)
+        return (int(self.x), int(self.y))
 
     # String method for debugging
     def __str__(self):

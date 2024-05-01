@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 from const import *
+from pacman import Pacman
 
 class GameController(object):
     def __init__(self):
@@ -15,9 +16,11 @@ class GameController(object):
 
     def start_game(self):
         self.set_background()
+        self.pacman = Pacman()
 
     def update(self):
         dt = self.clock.tick(30) / 1000.0
+        self.pacman.update(dt)
         self.check_events()
         self.render()
 
@@ -26,6 +29,8 @@ class GameController(object):
             if event.type == QUIT: exit()
 
     def render(self):
+        self.screen.blit(self.background, (0, 0))
+        self.pacman.render(self.screen)
         pygame.display.update()
 
 
