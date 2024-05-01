@@ -1,12 +1,13 @@
 import pygame
 from pygame.locals import *
+from nodes import Node
 from vector import Vector2
 from const import *
 
 class Pacman(object):
-    def __init__(self):
+    def __init__(self, node):
         self.name = PACMAN
-        self.position = Vector2(200, 400)
+        #self.position = Vector2(200, 400)
         self.directions = {
             STOP:Vector2(),
             UP:Vector2(0, -1),
@@ -18,11 +19,29 @@ class Pacman(object):
         self.speed = 100 * TILEWIDTH / 16
         self.radius = 10
         self.color = YELLOW
+        self.node = node
+        self.set_position()
+
+    def set_position(self):
+        self.position = self.node.position.copy()
 
     def update(self, dt):
-        self.position += self.directions[self.direction] * self.speed * dt
+        #self.position += self.directions[self.direction] * self.speed * dt
         direction = self.get_valid_key()
         self.direction = direction
+        self.node = self.get_new_target(direction)
+        self.set_position()
+
+    def valid_direction(self, direction):
+        if direction is not STOP:
+            if self.node.neighbors[direction] is not None:
+                return True
+        return False
+
+    def get_new_target(self, direction):
+        if self.valid_direction(direction):
+            return self.node.neighbors[direction]
+        return self.node
 
     def get_valid_key(self):
         key_pressed = pygame.key.get_pressed()
