@@ -27,8 +27,8 @@ class NodeGroup(object):
         #self.node_list = []
         self.level = level
         self.nodes_LUT = {}
-        self.node_symbols = ['+']
-        self.path_symbols = ['.']
+        self.node_symbols = ['+', 'P', 'n']
+        self.path_symbols = ['.', '-', '|', 'p']
         data = self.read_maze_file(level)
         self.create_node_table(data)
         self.connect_horizontally(data)

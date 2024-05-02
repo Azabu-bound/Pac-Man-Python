@@ -18,6 +18,8 @@ RIGHT = -2
 PORTAL = 3
 
 PACMAN = 0
+PELLET = 1
+POWERUPPELLET = 2
 
 # Node constants
 WHITE = (255, 255, 255)
