@@ -21,6 +21,7 @@ class Pacman(object):
         self.color = YELLOW
         self.node = node
         self.set_position()
+        self.target = node
 
     def set_position(self):
         self.position = self.node.position.copy()
@@ -54,3 +55,12 @@ class Pacman(object):
     def render(self, screen):
         p = self.position.as_int()
         pygame.draw.circle(screen, self.color, p, self.radius)
+
+    def overshot_target(self):
+        if self.target is not None:
+            vec1 = self.target.position - self.node.position
+            vec2 = self.position - self.node.position
+            node2_target = vec1.magnitude_squared()
+            node2_self = vec2.magnitude_squared()
+            return node2_self >= node2_target
+        return False
