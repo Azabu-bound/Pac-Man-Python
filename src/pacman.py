@@ -27,11 +27,21 @@ class Pacman(object):
         self.position = self.node.position.copy()
 
     def update(self, dt):
-        #self.position += self.directions[self.direction] * self.speed * dt
+        self.position += self.directions[self.direction] * self.speed * dt
         direction = self.get_valid_key()
-        self.direction = direction
-        self.node = self.get_new_target(direction)
-        self.set_position()
+        #self.direction = direction
+        #self.node = self.get_new_target(direction)
+        #self.set_position()
+        if self.overshot_target():
+            self.node = self.target
+            self.target = self.get_new_target(direction)
+
+            if self.target is not self.node:
+                self.direction = direction
+            else:
+                self.direction = STOP
+
+            self.set_position()
 
     def valid_direction(self, direction):
         if direction is not STOP:
