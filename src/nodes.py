@@ -98,3 +98,10 @@ class NodeGroup(object):
     def render(self, screen):
         for node in self.nodes_LUT.values():
             node.render(screen)
+
+    def set_portal_pair(self, pair1, pair2):
+        key1 = self.construct_key(*pair1)
+        key2 = self.construct_key(*pair2)
+        if key1 in self.nodes_LUT.keys() and key2 in self.nodes_LUT.keys():
+            self.nodes_LUT[key1].neighbors[PORTAL] = self.nodes_LUT[key2]
+            self.nodes_LUT[key2].neighbors[PORTAL] = self.nodes_LUT[key1]

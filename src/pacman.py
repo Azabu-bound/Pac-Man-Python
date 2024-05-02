@@ -34,6 +34,8 @@ class Pacman(object):
         #self.set_position()
         if self.overshot_target():
             self.node = self.target
+            if self.node.neighbors[PORTAL] is not None:
+                self.node = self.node.neighbors[PORTAL]
             self.target = self.get_new_target(direction)
             if self.target is not self.node:
                 self.direction = direction
