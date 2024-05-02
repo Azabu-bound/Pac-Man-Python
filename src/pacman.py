@@ -16,7 +16,7 @@ class Pacman(object):
             RIGHT:Vector2(1, 0)
         }
         self.direction = STOP
-        self.speed = 100 * TILEWIDTH / 16
+        self.speed = 100 * TITLEWIDTH / 16
         self.radius = 10
         self.color = YELLOW
         self.node = node

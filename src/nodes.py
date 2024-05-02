@@ -1,6 +1,7 @@
 import pygame
 from vector import Vector2
 from const import *
+import numpy as np
 
 class Node(object):
     def __init__(self, x, y):
@@ -21,45 +22,78 @@ class Node(object):
                 pygame.draw.circle(screen, RED, self.position.as_int(), 12)
 
 class NodeGroup(object):
-    def __init__(self):
-        self.node_list = []
+    def __init__(self, level):
+        #self.node_list = []
+        self.level = level
+        self.nodes_LUT = {}
+        self.node_symbols = ['+']
+        self.path_symbols = ['.']
+        data = self.read_maze_file(level)
+        self.create_node_table(data)
+        self.connect_horizontally(data)
+        self.connect_vertically(data)
 
-    def test_nodes(self):
-        nodeA = Node(80, 80)
-        nodeB = Node(160, 80)
-        nodeC = Node(80, 160)
-        nodeD = Node(160, 160)
-        nodeE = Node(208, 160)
-        nodeF = Node(80, 320)
-        nodeG = Node(208, 320)
+    # Read the text file
+    def read_maze_file(self, textfile):
+        return np.loadtxt(textfile, dtype = '<U1') # set dtype to U1 to avoid errors when encountering '.'
 
-        nodeA.neighbors[RIGHT] = nodeB
-        nodeA.neighbors[DOWN] = nodeC
-        nodeB.neighbors[LEFT] = nodeA
-        nodeB.neighbors[DOWN] = nodeA
-        nodeC.neighbors[UP] = nodeA
-        nodeC.neighbors[RIGHT] = nodeD
-        nodeC.neighbors[DOWN] = nodeF
-        nodeD.neighbors[UP] = nodeB
-        nodeD.neighbors[LEFT] = nodeC
-        nodeD.neighbors[RIGHT] = nodeE
-        nodeE.neighbors[LEFT] = nodeD
-        nodeE.neighbors[DOWN] = nodeG
-        nodeF.neighbors[UP] = nodeC
-        nodeF.neighbors[RIGHT] = nodeG
-        nodeG.neighbors[UP] = nodeE
-        nodeG.neighbors[LEFT] = nodeF
+    # Generate node table
+    def create_node_table(self, data, xoffset=0, yoffset=0):
+        for row in list(range(data.shape[0])):
+            for col in list(range(data.shape[1])):
+                if data[row][col] in self.node_symbols:
+                    x, y = self.construct_key(col+xoffset, row+yoffset)
+                    self.nodes_LUT[(x, y)] = Node(x, y)
 
-        self.node_list = [
-            nodeA,
-            nodeB,
-            nodeC,
-            nodeD,
-            nodeE,
-            nodeF,
-            nodeG
-        ]
+    def construct_key(self, x, y):
+      return x * TITLEWIDTH, y * TITLEHEIGHT
+
+    def connect_horizontally(self, data, xoffset=0, yoffset=0):
+        for row in list(range(data.shape[0])):
+            key = None
+            for col in list(range(data.shape[1])):
+                if data[row][col] in self.node_symbols:
+                    if key is None:
+                        key = self.construct_key(col+xoffset, row+yoffset)
+                    else:
+                        other_key = self.construct_key(col+xoffset, row+yoffset)
+                        self.nodes_LUT[key].neighbors[RIGHT] = self.nodes_LUT[other_key]
+                        self.nodes_LUT[other_key].neighbors[LEFT] = self.nodes_LUT[key]
+                        key = other_key
+                elif data[row][col] not in self.path_symbols:
+                    key = None
+
+    def connect_vertically(self, data, xoffset=0, yoffset=0):
+        dataT = data.transpose()
+        for col in list(range(dataT.shape[0])):
+            key = None
+            for row in list(range(dataT.shape[1])):
+                if dataT[col] [row] in self.node_symbols:
+                    if key is None:
+                        key = self.construct_key(col+xoffset, row+yoffset)
+                    else:
+                        other_key = self.construct_key(col+xoffset, row+yoffset)
+                        self.nodes_LUT[key].neighbors[DOWN] = self.nodes_LUT[other_key]
+                        self.nodes_LUT[other_key].neighbors[UP] = self.nodes_LUT[key]
+                        key = other_key
+                elif dataT[col] [row] not in self.path_symbols:
+                    key = None
+
+    def get_node_from_pixels(self, xpixel, ypixel):
+        if (xpixel, ypixel) in self.nodes_LUT.keys():
+            return self.nodes_LUT[(xpixel, ypixel)]
+        return None
+
+    def get_node_from_tiles(self, col, row):
+        x, y = self.construct_key(col, row)
+        if (x, y) in self.nodes_LUT.keys():
+            return self.nodes_LUT[(x, y)]
+        return None
+
+    def get_start_temp_node(self):
+        nodes = list(self.nodes_LUT.values())
+        return nodes[0]
 
     def render(self, screen):
-        for node in self.node_list:
+        for node in self.nodes_LUT.values():
             node.render(screen)
