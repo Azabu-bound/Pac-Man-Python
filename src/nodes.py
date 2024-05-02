@@ -10,7 +10,8 @@ class Node(object):
             UP:None,
             DOWN:None,
             LEFT:None,
-            RIGHT:None
+            RIGHT:None,
+            PORTAL:None
         }
 
     def render(self, screen):
