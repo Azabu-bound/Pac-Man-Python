@@ -89,5 +89,7 @@ class Pacman(object):
         self.target = temp
 
     def opposite_direction(self, direction):
-        if direction is not STOP: return True
+        if direction is not STOP:
+            if direction == self.direction * -1:
+                return True
         return False
