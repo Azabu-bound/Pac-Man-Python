@@ -54,7 +54,8 @@ class GameController(object):
         if p:
             self.pellets.number_eaten += 1
             self.pellets.pellet_list.remove(p)
-
+            if p.name == POWERUPPELLET:
+                self.ghost.start_freight()
 
 if __name__ == "__main__":
     game = GameController()

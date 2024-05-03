@@ -38,3 +38,13 @@ class Ghost(Entity):
             print(f"Chasing Pacman: {self.goal}")
         else:
             print("Pacman object is None")
+
+    def start_freight(self):
+        self.mode.set_freight_mode()
+        if self.mode.current == FREIGHT:
+            self.set_speed(50)
+            self.direction_method = self.random_direction
+
+    def normal_mode(self):
+        self.set_speed(100)
+        self.direction_method = self.astar_direction

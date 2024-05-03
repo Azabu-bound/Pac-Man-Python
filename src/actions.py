@@ -38,4 +38,19 @@ class ContollerOfModes(object):
 
     def update(self, dt) -> None:
         self.default.update(dt)
-        self.current = self.default.mode
+        if self.current is FREIGHT:
+            self.timer += dt
+            if self.timer >= self.time:
+                self.time = None
+                self.entity.normal_mode()
+                self.current = self.default.mode
+        else:
+            self.current = self.default.mode
+
+    def set_freight_mode(self):
+        if self.current in [SCATTER, CHASE]:
+            self.timer = 0
+            self.time = 7
+            self.current = FREIGHT
+        elif self.current is FREIGHT:
+            self.timer = 0
