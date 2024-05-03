@@ -4,6 +4,7 @@ from const import *
 from pacman import Pacman
 from nodes import NodeGroup
 from pellets import Pellets_Group
+from spooky import GHOST, Ghost
 
 class GameController(object):
     def __init__(self):
@@ -22,10 +23,12 @@ class GameController(object):
         self.nodes.set_portal_pair((0, 17), (27, 17))
         self.pacman = Pacman(self.nodes.get_start_temp_node())
         self.pellets = Pellets_Group("maze1.txt")
+        self.ghost = Ghost(self.nodes.get_start_temp_node())
 
     def update(self):
         dt = self.clock.tick(30) / 1000.0
         self.pacman.update(dt)
+        self.ghost.update(dt)
         self.pellets.update(dt)
         self.pellet_events()
         self.check_events()
@@ -40,6 +43,7 @@ class GameController(object):
         self.nodes.render(self.screen)
         self.pellets.render(self.screen)
         self.pacman.render(self.screen)
+        self.ghost.render(self.screen)
         pygame.display.update()
 
     def pellet_events(self):
