@@ -33,6 +33,7 @@ class NodeGroup(object):
         self.create_node_table(data)
         self.connect_horizontally(data)
         self.connect_vertically(data)
+        self.homekey = None
 
     # Read the text file
     def read_maze_file(self, textfile):

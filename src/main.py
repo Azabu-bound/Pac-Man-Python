@@ -23,7 +23,7 @@ class GameController(object):
         self.nodes.set_portal_pair((0, 17), (27, 17))
         self.pacman = Pacman(self.nodes.get_start_temp_node())
         self.pellets = Pellets_Group("maze1.txt")
-        self.ghost = Ghost(self.nodes.get_start_temp_node())
+        self.ghost = Ghost(self.nodes.get_start_temp_node(), self.pacman)
 
     def update(self):
         dt = self.clock.tick(30) / 1000.0
