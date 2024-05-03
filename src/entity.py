@@ -1,10 +1,22 @@
-from platform import node
 import pygame
 from pygame.locals import *
 from nodes import Node
 from vector import Vector2
 from const import *
 from random import randint
+import heapq
+
+class PriorityEntry:
+    def __init__(self, priority, cost, node):
+        self.priority = priority
+        self.cost = cost
+        self.node = node
+
+    def __lt__(self, other):
+        return (self.priority < other.priority) or (self.priority == other.priority and self.cost < other.cost)
+
+    def __eq__(self, other):
+        return self.node == other.node and self.cost == other.cost and self.priority == other.priority
 
 class Entity(object):
     def __init__(self, node) -> None:
@@ -101,6 +113,8 @@ class Entity(object):
 
     def random_direction(self, directions):
         return directions[randint(0, len(directions)-1)]
+    """"
+    Original pathfindng algorithm:
 
     def goal_direction(self, directions):
         distances = []
@@ -109,3 +123,65 @@ class Entity(object):
             distances.append(vec.magnitude_squared())
         i = distances.index(min(distances))
         return directions[i]
+    """
+
+    """
+    A* algorithm implementation.
+    LET'GO!
+    I will import heapq.
+    """
+    def astar_direction(self, directions):
+        queue = []
+        cost = {self.node: 0}
+        previous = {self.node: None}
+
+        heapq.heappush(queue, PriorityEntry(0, 0, self.node))  # Push the starting node
+
+        while queue:
+            current_entry = heapq.heappop(queue)  # Pop the entry with the lowest priority
+            current_cost = current_entry.cost
+            current_node = current_entry.node
+
+            if current_node.position == self.goal:
+                path = []
+                while current_node != self.node:
+                    path.append(current_node)
+                    current_node = previous[current_node]
+                path.append(self.node)
+                path.reverse()
+                if len(path) > 1:
+                    next_node = path[1]
+                    for d in directions:
+                        if self.node.neighbors[d] == next_node:
+                            return d
+                break
+
+            for d in directions:
+                neighbor = self.node.neighbors[d]
+                if neighbor is not None:
+                    new_cost = current_cost + 1
+                    if neighbor not in cost or new_cost < cost[neighbor]:
+                        cost[neighbor] = new_cost
+                        priority = new_cost + self.heuristic(neighbor.position, self.goal)
+                        heapq.heappush(queue, PriorityEntry(priority, new_cost, neighbor))
+                        previous[neighbor] = current_node
+
+            if not queue:
+                    # If no path is found, return the direction that brings the ghost closer to the goal
+                    min_distance = float('inf')
+                    closest_direction = None
+                    for d in directions:
+                        neighbor = self.node.neighbors[d]
+                        if neighbor is not None:
+                            distance = self.heuristic(neighbor.position, self.goal)
+                            if distance < min_distance:
+                                min_distance = distance
+                                closest_direction = d
+                    if closest_direction is not None:
+                        return closest_direction
+
+        return self.random_direction(directions)
+
+    def heuristic(self, a, b):
+        # Manhattan distance heuristic
+        return abs(a.x - b.x) + abs(a.y - b.y)

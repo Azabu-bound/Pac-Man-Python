@@ -12,16 +12,20 @@ class Default(object):
                 self.chase()
             elif self.mode is CHASE:
                 self.scatter()
+        print(f"Default mode: {self.mode}, Timer: {self.timer}, Time: {self.time}")
+
 
     def scatter(self) -> None:
         self.mode = SCATTER
-        self.time = 10
+        self.time = 7
         self.timer = 0
+        print("Switching to SCATTER mode")
 
     def chase(self) -> None:
         self.mode = CHASE
-        self.time = 23
+        self.time = 20
         self.timer = 0
+        print("Switching to CHASE mode")
 
 
 class ContollerOfModes(object):

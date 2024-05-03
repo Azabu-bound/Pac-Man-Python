@@ -14,6 +14,9 @@ class Node(object):
             PORTAL:None
         }
 
+    #def __it__(self, other):
+    #    return self.position.x < other.position.x or (self.position.x == other.position.x and self.position.y < other.position.y)
+
     def render(self, screen):
         for n in self.neighbors.keys():
             if self.neighbors[n] is not None:

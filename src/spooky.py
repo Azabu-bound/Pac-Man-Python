@@ -7,14 +7,15 @@ from vector import Vector2
 from const import *
 from entity import Entity
 from actions import ContollerOfModes
+from pacman import Pacman
 
 class Ghost(Entity):
-    def __init__(self, node, pacman=None) -> None:
+    def __init__(self, node, pacman=None):
         Entity.__init__(self, node)
         self.name = GHOST
         self.points = 200
         self.goal = Vector2()
-        self.direction_method = self.goal_direction
+        self.direction_method = self.astar_direction
         self.pacman = pacman
         self.mode = ContollerOfModes(self)
 
@@ -24,10 +25,16 @@ class Ghost(Entity):
             self.scatter()
         elif self.mode.current is CHASE:
             self.chase()
+        print(f"Ghost mode: {self.mode.current}, Goal: {self.goal}, Direction method: {self.direction_method}")
         Entity.update(self, dt)
 
     def scatter(self) -> None:
         self.goal = Vector2()
 
     def chase(self) -> None:
-        self.goal = self.pacman.position
+        if self.pacman is not None:
+            self.goal = self.pacman.position
+            self.direction_method = self.astar_direction
+            print(f"Chasing Pacman: {self.goal}")
+        else:
+            print("Pacman object is None")
