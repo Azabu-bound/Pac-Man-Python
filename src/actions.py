@@ -44,8 +44,17 @@ class ContollerOfModes(object):
                 self.time = None
                 self.entity.normal_mode()
                 self.current = self.default.mode
-        else:
-            self.current = self.default.mode
+        elif self.current in [SCATTER, CHASE]:
+                self.current = self.default.mode
+
+        if self.current is SPAWN:
+            if self.entity.node == self.entity.spawn_node:
+                self.entity.normal_mode()
+                self.current = self.default.mode
+
+    def set_spawn_mode(self):
+        if self.current is FREIGHT:
+            self.current = SPAWN
 
     def set_freight_mode(self):
         if self.current in [SCATTER, CHASE]:

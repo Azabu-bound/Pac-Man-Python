@@ -49,9 +49,22 @@ class Pacman(Entity):
 
     def consume_pellets(self, pellet_list):
         for p in pellet_list:
-            d = self.position - p.position
-            d_square = d.magnitude_squared()
-            r_square = (p.radius + self.collide_radius) ** 2
+            if self.collide_check(p):
+                return p
+            #d = self.position - p.position
+            #d_square = d.magnitude_squared()
+            #r_square = (p.radius + self.collide_radius) ** 2
 
-            if d_square <= r_square: return p
+            #if d_square <= r_square: return p
         return None
+
+    def collide_ghost(self, ghost):
+        return self.collide_check(ghost)
+
+    def collide_check(self, other):
+        d = self.position - other.position
+        d_square = d.magnitude_squared()
+        r_square = (self.collide_radius + other.collide_radius) ** 2
+
+        if d_square <= r_square: return True
+        return False

@@ -27,6 +27,7 @@ class GameController(object):
         self.pacman = Pacman(self.nodes.get_start_temp_node())
         self.pellets = Pellets_Group("maze1.txt")
         self.ghost = Ghost(self.nodes.get_start_temp_node(), self.pacman)
+        self.ghost.set_spawn_node(self.nodes.get_node_from_tiles(2 + 11.5, 3 + 14))
 
     def update(self):
         dt = self.clock.tick(30) / 1000.0
@@ -34,8 +35,14 @@ class GameController(object):
         self.ghost.update(dt)
         self.pellets.update(dt)
         self.pellet_events()
+        self.check_ghost_events()
         self.check_events()
         self.render()
+
+    def check_ghost_events(self):
+        if self.pacman.collide_ghost(self.ghost):
+            if self.ghost.mode.current is FREIGHT:
+                self.ghost.start_spawn()
 
     def check_events(self):
         for event in pygame.event.get():
