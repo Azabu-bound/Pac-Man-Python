@@ -12,6 +12,11 @@ class GameController(object):
         self.screen = pygame.display.set_mode(SCREENSIZE, 0, 32)
         self.background = None
         self.clock = pygame.time.Clock()
+        #self.lives = 3
+
+    #def restart_game(self):
+        #self.lives = 3
+        #self.start_game()
 
     def set_background(self):
         self.background = pygame.surface.Surface(SCREENSIZE).convert()
