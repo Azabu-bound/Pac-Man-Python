@@ -5,6 +5,7 @@ from pacman import Pacman
 from nodes import NodeGroup
 from pellets import Pellets_Group
 from spooky import GhostGroup
+from pause import Pause
 
 class GameController(object):
     def __init__(self):
@@ -12,6 +13,7 @@ class GameController(object):
         self.screen = pygame.display.set_mode(SCREENSIZE, 0, 32)
         self.background = None
         self.clock = pygame.time.Clock()
+        self.pause = Pause(True)
         #self.lives = 3
 
     #def restart_game(self):
@@ -43,12 +45,16 @@ class GameController(object):
 
     def update(self):
         dt = self.clock.tick(30) / 1000.0
-        self.pacman.update(dt)
-        #self.ghost.update(dt)
-        self.ghosts.update(dt)
         self.pellets.update(dt)
-        self.pellet_events()
-        self.check_ghost_events()
+        if not self.pause.paused:
+            self.pacman.update(dt)
+            #self.ghost.update(dt)
+            self.ghosts.update(dt)
+            self.pellet_events()
+            self.check_ghost_events()
+        post_pause_method = self.pause.update(dt)
+        if post_pause_method is not None:
+            post_pause_method()
         self.check_events()
         self.render()
 
@@ -56,14 +62,33 @@ class GameController(object):
         for ghost in self.ghosts:
             if self.pacman.collide_ghost(ghost):
                 if ghost.mode.current is FREIGHT:
+                    self.pacman.visible = False
+                    ghost.visible = False
+                    self.pause.set_pause(pause_time=1, func=self.show_sprites)
                     ghost.start_spawn()
+
+    def show_sprites(self):
+        self.pacman.visible = True
+        self.ghosts.show()
+
+    def hide_sprites(self):
+        self.pacman.visible = False
+        self.ghosts.hide()
         #if self.pacman.collide_ghost(self.ghost):
             #if self.ghost.mode.current is FREIGHT:
                 #self.ghost.start_spawn()
 
     def check_events(self):
         for event in pygame.event.get():
-            if event.type == QUIT: exit()
+            if event.type == QUIT:
+                exit()
+            elif event.type == KEYDOWN:
+                if event.key == K_SPACE:
+                    self.pause.set_pause(player_paused=True)
+                    if not self.pause.paused:
+                        self.show_sprites()
+                    else:
+                        self.hide_sprites()
 
     def render(self):
         self.screen.blit(self.background, (0, 0))
@@ -79,9 +104,14 @@ class GameController(object):
         if p:
             self.pellets.number_eaten += 1
             self.pellets.pellet_list.remove(p)
-            if p.name == POWERUPPELLET:
+            if p.name is POWERUPPELLET:
                 #self.ghost.start_freight()
                 self.ghosts.start_freight()
+            if self.pellets.is_empty():
+                print("You win! Congrats, and thanks for playing :)")
+                pygame.quit()
+                exit()
+
 
 if __name__ == "__main__":
     game = GameController()
