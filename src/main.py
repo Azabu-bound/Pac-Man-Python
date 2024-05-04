@@ -141,8 +141,9 @@ class GameController(object):
                 self.ghosts.start_freight()
             if self.pellets.is_empty():
                 print("You win! Congrats, and thanks for playing :)")
-                pygame.quit()
-                exit()
+                #pygame.quit()
+                #exit()
+                self.pause.set_pause(pause_time=3, func = self.restart_game)
 
 if __name__ == "__main__":
     game = GameController()

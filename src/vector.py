@@ -47,7 +47,3 @@ class Vector2(object):
 
     def as_int(self):
         return (int(self.x), int(self.y))
-
-    # String method for debugging
-    def __str__(self):
-        return "<"+str(self.x)+", "+str(self.y)+">"
