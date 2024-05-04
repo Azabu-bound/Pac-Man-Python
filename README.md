@@ -176,4 +176,5 @@ While this project functions as intended and largely resembles Pac-Man, it could
 #### References
 - https://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html (A*)
 - https://www.youtube.com/watch?v=eSOJ3ARN5FM (A*)
+- https://www.youtube.com/watch?v=9H27CimgPsQ (Pac-Man)
 - https://pacman.holenet.info/#Chapter_2 (Pac-Man)
