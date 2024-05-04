@@ -1,4 +1,4 @@
-# Pac-Man-Python and A*
+# 2270 Project: Pac-Man-Python and A*
 
 ### Demo
 
