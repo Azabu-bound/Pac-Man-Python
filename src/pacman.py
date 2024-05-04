@@ -11,7 +11,8 @@ class Pacman(Entity):
         self.name = PACMAN
         self.color = YELLOW
         self.direction = LEFT
-
+        self.set_between_nodes(LEFT)
+        self.alive = True
 
     def update(self, dt):
         self.position += self.directions[self.direction] * self.speed * dt
@@ -69,3 +70,13 @@ class Pacman(Entity):
 
         if d_square <= r_square: return True
         return False
+
+    def reset(self):
+        Entity.reset(self)
+        self.direction = LEFT
+        self.set_between_nodes(LEFT)
+        self.alive = True
+
+    def die(self):
+        self.alive = False
+        self.directon = STOP

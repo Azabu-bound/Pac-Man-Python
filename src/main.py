@@ -14,11 +14,18 @@ class GameController(object):
         self.background = None
         self.clock = pygame.time.Clock()
         self.pause = Pause(True)
+        self.lives = 3
         #self.lives = 3
 
-    #def restart_game(self):
-        #self.lives = 3
-        #self.start_game()
+    def restart_game(self):
+        self.lives = 3
+        self.pause.paused = True
+        self.start_game()
+
+    def reset_level(self):
+        self.pause.paused = True
+        self.pacman.reset()
+        self.ghosts.reset()
 
     def set_background(self):
         self.background = pygame.surface.Surface(SCREENSIZE).convert()
@@ -66,6 +73,15 @@ class GameController(object):
                     ghost.visible = False
                     self.pause.set_pause(pause_time=1, func=self.show_sprites)
                     ghost.start_spawn()
+                elif ghost.mode.current is not SPAWN:
+                    if self.pacman.alive:
+                        self.lives -= 1
+                        self.pacman.die()
+                        self.ghosts.hide()
+                        if self.lives <= 0:
+                            self.pause.set_pause(pause_time=3, func = self.restart_game)
+                        else:
+                            self.pause.set_pause(pause_time=3, func = self.reset_level)
 
     def show_sprites(self):
         self.pacman.visible = True
@@ -84,11 +100,12 @@ class GameController(object):
                 exit()
             elif event.type == KEYDOWN:
                 if event.key == K_SPACE:
-                    self.pause.set_pause(player_paused=True)
-                    if not self.pause.paused:
-                        self.show_sprites()
-                    else:
-                        self.hide_sprites()
+                    if self.pacman.alive:
+                        self.pause.set_pause(player_paused=True)
+                        if not self.pause.paused:
+                            self.show_sprites()
+                        else:
+                            self.hide_sprites()
 
     def render(self):
         self.screen.blit(self.background, (0, 0))
@@ -111,7 +128,6 @@ class GameController(object):
                 print("You win! Congrats, and thanks for playing :)")
                 pygame.quit()
                 exit()
-
 
 if __name__ == "__main__":
     game = GameController()
