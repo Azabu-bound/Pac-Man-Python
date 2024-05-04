@@ -49,6 +49,16 @@ class GameController(object):
         self.ghosts.clyde.set_start_node(self.nodes.get_node_from_tiles(4 + 11.5, 3 + 14))
         #self.ghost.set_spawn_node(self.nodes.get_node_from_tiles(2 + 11.5, 3 + 14))
         self.ghosts.set_spawn_node(self.nodes.get_node_from_tiles(2 + 11.5, 3 + 14))
+        self.nodes.deny_home_access(self.pacman)
+        self.nodes.deny_home_access_list(self.ghosts)
+        self.nodes.thou_shall_not_pass_list(2+11.5, 3+14, LEFT, self.ghosts)
+        self.nodes.thou_shall_not_pass_list(2+11.5, 3+14, RIGHT, self.ghosts)
+        self.ghosts.inky.start_node.thou_shall_not_pass(RIGHT, self.ghosts.inky)
+        self.ghosts.clyde.start_node.thou_shall_not_pass(LEFT, self.ghosts.clyde)
+        self.nodes.thou_shall_not_pass_list(12, 14, UP, self.ghosts)
+        self.nodes.thou_shall_not_pass_list(15, 14, UP, self.ghosts)
+        self.nodes.thou_shall_not_pass_list(12, 26, UP, self.ghosts)
+        self.nodes.thou_shall_not_pass_list(15, 26, UP, self.ghosts)
 
     def update(self):
         dt = self.clock.tick(30) / 1000.0
@@ -73,6 +83,7 @@ class GameController(object):
                     ghost.visible = False
                     self.pause.set_pause(pause_time=1, func=self.show_sprites)
                     ghost.start_spawn()
+                    self.nodes.allow_home_access(ghost)
                 elif ghost.mode.current is not SPAWN:
                     if self.pacman.alive:
                         self.lives -= 1
@@ -120,6 +131,10 @@ class GameController(object):
         p = self.pacman.consume_pellets(self.pellets.pellet_list)
         if p:
             self.pellets.number_eaten += 1
+            if self.pellets.number_eaten == 30:
+                self.ghosts.inky.start_node.move_along(RIGHT, self.ghosts.inky)
+            if self.pellets.number_eaten == 70:
+                self.ghosts.clyde.start_node.move_along(LEFT, self.ghosts.clyde)
             self.pellets.pellet_list.remove(p)
             if p.name is POWERUPPELLET:
                 #self.ghost.start_freight()

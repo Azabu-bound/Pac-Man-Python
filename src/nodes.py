@@ -13,6 +13,20 @@ class Node(object):
             RIGHT:None,
             PORTAL:None
         }
+        self.access = {
+            UP:[PACMAN, BLINKY, PINKY, INKY, CLYDE],
+            DOWN:[PACMAN, BLINKY, PINKY, INKY, CLYDE],
+            LEFT:[PACMAN, BLINKY, PINKY, INKY, CLYDE],
+            RIGHT:[PACMAN, BLINKY, PINKY, INKY, CLYDE,]
+        }
+
+    def thou_shall_not_pass(self, direction, entity):
+        if entity.name in self.access[direction]:
+            self.access[direction].remove(entity.name)
+
+    def move_along(self, direction, entity):
+        if entity.name not in self.access[direction]:
+            self.access[direction].append(entity.name)
 
     #def __it__(self, other):
     #    return self.position.x < other.position.x or (self.position.x == other.position.x and self.position.y < other.position.y)
@@ -129,3 +143,35 @@ class NodeGroup(object):
         key = self.construct_key(*otherkey)
         self.nodes_LUT[homekey].neighbors[direction] = self.nodes_LUT[key]
         self.nodes_LUT[key].neighbors[direction * -1] = self.nodes_LUT[homekey]
+
+    def thou_shall_not_pass(self, col, row, direction, entity):
+        node = self.get_node_from_tiles(col, row)
+        if node is not None:
+            node.thou_shall_not_pass(direction, entity)
+
+    def move_along(self, col, row, direction, entity):
+        node = self.get_node_from_tiles(col, row)
+        if node is not None:
+            node.move_along(direction, entity)
+
+    def thou_shall_not_pass_list(self, col, row, direction, entities):
+        for e in entities:
+            self.thou_shall_not_pass(col, row, direction, e)
+
+    def move_along_list(self, col, row, direction, entities):
+        for e in entities:
+            self.move_along(col, row, direction, e)
+
+    def deny_home_access(self, entity):
+        self.nodes_LUT[self.homekey].thou_shall_not_pass(DOWN, entity)
+
+    def allow_home_access(self, entity):
+        self.nodes_LUT[self.homekey].move_along(DOWN, entity)
+
+    def deny_home_access_list(self, entities):
+        for e in entities:
+            self.deny_home_access(e)
+
+    def allow_home_access_list(self, entities):
+        for e in entities:
+            self.allow_home_access(e)

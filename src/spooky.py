@@ -55,6 +55,7 @@ class Ghost(Entity):
     def normal_mode(self):
         self.set_speed(100)
         self.direction_method = self.astar_direction
+        self.home_node.thou_shall_not_pass(DOWN, self)
 
     def spawn(self):
         self.goal = self.spawn_node.position
